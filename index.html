@@ -2,66 +2,56 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>three.js webgl - effects - stereo</title>
+		<title>Codeaholic.io</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
 			body {
-				background:#777;
-				padding:0;
-				margin:0;
-				font-weight: bold;
-				overflow:hidden;
-			}
-
-			#info {
-				position: absolute;
-				top: 0px; width: 100%;
-				color: #ffffff;
-				padding: 5px;
+				background-color: #000000;
+				margin: 0px;
+				overflow: hidden;
 				font-family:Monospace;
 				font-size:13px;
 				text-align:center;
-				z-index:1000;
+				font-weight: bold;
+				text-align:center;
 			}
 
 			a {
-				color: #ffffff;
+				color:#0078ff;
 			}
 
-			#oldie a { color:#da0 }
+			#info {
+				color: #fff;
+				position: absolute;
+				top: 0px; width: 100%;
+				padding: 5px;
+				z-index: 100;
+			}
+
 		</style>
 	</head>
-
 	<body>
+
 		<div id="info">
+
 		</div>
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js"></script>
-
-		<script src="StereoEffect.js"></script>
+		<script src="three.min.js"></script>
 
 		<script src="Detector.js"></script>
+		<script src="stats.min.js"></script>
 
 		<script>
 
 			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
-			var container;
-
-			var camera, scene, renderer, effect;
-
-			var mesh, lightMesh, geometry;
-			var spheres = [];
-
-			var directionalLight, pointLight;
-
+			var container, stats;
+			var camera, scene, renderer, particles, geometry, materials = [], parameters, i, h, color, size;
 			var mouseX = 0, mouseY = 0;
 
 			var windowHalfX = window.innerWidth / 2;
 			var windowHalfY = window.innerHeight / 2;
-
-			document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
 			init();
 			animate();
@@ -71,63 +61,63 @@
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
-				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
-				camera.position.z = 3200;
+				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 3000 );
+				camera.position.z = 1000;
 
 				scene = new THREE.Scene();
+				scene.fog = new THREE.FogExp2( 0x000000, 0.0007 );
 
-				var geometry = new THREE.SphereBufferGeometry( 100, 32, 16 );
+				geometry = new THREE.Geometry();
 
-				var path = "textures/cube/skybox/";
-				var format = '.jpg';
-				var urls = [
-					path + 'px' + format, path + 'nx' + format,
-					path + 'py' + format, path + 'ny' + format,
-					path + 'pz' + format, path + 'nz' + format
-				];
+				for ( i = 0; i < 20000; i ++ ) {
 
-				var textureCube = THREE.ImageUtils.loadTextureCube( urls, THREE.CubeRefractionMapping );
-				var material = new THREE.MeshBasicMaterial( { color: 0xffffff, envMap: textureCube, refractionRatio: 0.95 } );
+					var vertex = new THREE.Vector3();
+					vertex.x = Math.random() * 2000 - 1000;
+					vertex.y = Math.random() * 2000 - 1000;
+					vertex.z = Math.random() * 2000 - 1000;
 
-				for ( var i = 0; i < 500; i ++ ) {
-
-					var mesh = new THREE.Mesh( geometry, material );
-					mesh.position.x = Math.random() * 10000 - 5000;
-					mesh.position.y = Math.random() * 10000 - 5000;
-					mesh.position.z = Math.random() * 10000 - 5000;
-					mesh.scale.x = mesh.scale.y = mesh.scale.z = Math.random() * 3 + 1;
-					scene.add( mesh );
-
-					spheres.push( mesh );
+					geometry.vertices.push( vertex );
 
 				}
 
-				// Skybox
+				parameters = [
+					[ [1, 1, 0.5], 5 ],
+					[ [0.95, 1, 0.5], 4 ],
+					[ [0.90, 1, 0.5], 3 ],
+					[ [0.85, 1, 0.5], 2 ],
+					[ [0.80, 1, 0.5], 1 ]
+				];
 
-				var shader = THREE.ShaderLib[ "cube" ];
-				shader.uniforms[ "tCube" ].value = textureCube;
+				for ( i = 0; i < parameters.length; i ++ ) {
 
-				var material = new THREE.ShaderMaterial( {
+					color = parameters[i][0];
+					size  = parameters[i][1];
 
-					fragmentShader: shader.fragmentShader,
-					vertexShader: shader.vertexShader,
-					uniforms: shader.uniforms,
-					side: THREE.BackSide
+					materials[i] = new THREE.PointsMaterial( { size: size } );
 
-				} ),
+					particles = new THREE.Points( geometry, materials[i] );
 
-				mesh = new THREE.Mesh( new THREE.BoxGeometry( 100000, 100000, 100000 ), material );
-				scene.add( mesh );
+					particles.rotation.x = Math.random() * 6;
+					particles.rotation.y = Math.random() * 6;
+					particles.rotation.z = Math.random() * 6;
 
-				//
+					scene.add( particles );
+
+				}
 
 				renderer = new THREE.WebGLRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
 
-				effect = new THREE.StereoEffect( renderer );
-				effect.eyeSeparation = 10;
-				effect.setSize( window.innerWidth, window.innerHeight );
+				stats = new Stats();
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				container.appendChild( stats.domElement );
+
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+				document.addEventListener( 'touchmove', onDocumentTouchMove, false );
 
 				//
 
@@ -137,20 +127,46 @@
 
 			function onWindowResize() {
 
-				windowHalfX = window.innerWidth / 2,
-				windowHalfY = window.innerHeight / 2,
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
 
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
 
-				effect.setSize( window.innerWidth, window.innerHeight );
+				renderer.setSize( window.innerWidth, window.innerHeight );
 
 			}
 
 			function onDocumentMouseMove( event ) {
 
-				mouseX = ( event.clientX - windowHalfX ) * 10;
-				mouseY = ( event.clientY - windowHalfY ) * 10;
+				mouseX = event.clientX - windowHalfX;
+				mouseY = event.clientY - windowHalfY;
+
+			}
+
+			function onDocumentTouchStart( event ) {
+
+				if ( event.touches.length === 1 ) {
+
+					event.preventDefault();
+
+					mouseX = event.touches[ 0 ].pageX - windowHalfX;
+					mouseY = event.touches[ 0 ].pageY - windowHalfY;
+
+				}
+
+			}
+
+			function onDocumentTouchMove( event ) {
+
+				if ( event.touches.length === 1 ) {
+
+					event.preventDefault();
+
+					mouseX = event.touches[ 0 ].pageX - windowHalfX;
+					mouseY = event.touches[ 0 ].pageY - windowHalfY;
+
+				}
 
 			}
 
@@ -161,31 +177,45 @@
 				requestAnimationFrame( animate );
 
 				render();
+				stats.update();
 
 			}
 
 			function render() {
 
-				var timer = 0.0001 * Date.now();
+				var time = Date.now() * 0.00005;
 
-				camera.position.x += ( mouseX - camera.position.x ) * .05;
-				camera.position.y += ( - mouseY - camera.position.y ) * .05;
+				camera.position.x += ( mouseX - camera.position.x ) * 0.05;
+				camera.position.y += ( - mouseY - camera.position.y ) * 0.05;
+
 				camera.lookAt( scene.position );
 
-				for ( var i = 0, il = spheres.length; i < il; i ++ ) {
+				for ( i = 0; i < scene.children.length; i ++ ) {
 
-					var sphere = spheres[ i ];
+					var object = scene.children[ i ];
 
-					sphere.position.x = 5000 * Math.cos( timer + i );
-					sphere.position.y = 5000 * Math.sin( timer + i * 1.1 );
+					if ( object instanceof THREE.Points ) {
+
+						object.rotation.y = time * ( i < 4 ? i + 1 : - ( i + 1 ) );
+
+					}
 
 				}
 
-				effect.render( scene, camera );
+				for ( i = 0; i < materials.length; i ++ ) {
+
+					color = parameters[i][0];
+
+					h = ( 360 * ( color[0] + time ) % 360 ) / 360;
+					materials[i].color.setHSL( h, color[1], color[2] );
+
+				}
+
+				renderer.render( scene, camera );
 
 			}
 
-		</script>
 
+		</script>
 	</body>
 </html>
