@@ -1,0 +1,5 @@
+node_modules
+public/dist
+npm-debug.log
+map_data
+config.json
