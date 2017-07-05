@@ -14,6 +14,8 @@ var transform = require('vinyl-transform');
 var babel = require('gulp-babel');
 var babelify = require('babelify');
 var uglifyify = require('uglifyify');
+var sass = require('gulp-sass')
+
 
 var path = {
   HTML: 'public/index.html',
@@ -62,7 +64,7 @@ gulp.task('watch', function() {
 gulp.task('build', function(){
   browserify({
     entries: [path.ENTRY_POINT],
-    transform: [lessify, reactify],
+    transform: [lessify, reactify, sassify],
     debug: true,
   })
     .bundle()
