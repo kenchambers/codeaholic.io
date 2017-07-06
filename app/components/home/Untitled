@@ -417,7 +417,7 @@ export class Home extends React.Component {
 
 
                      <Link to="/about">
-                     <div onClick={self.buttonClick} className="night-hotel" onClick={function(){
+                     <div onTouchTap={self.buttonTouchTap} className="night-hotel" onTouchTap={function(){
                          console.log("CHICKEN SALAD",window)
                          window.onDocumentClick
 

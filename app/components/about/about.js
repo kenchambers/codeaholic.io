@@ -4,7 +4,6 @@ import './about.less'
 import { CSSTransitionGroup } from 'react-transition-group' // ES6
 
 
-
 export class About extends React.Component {
   constructor(props) {
     super(props)

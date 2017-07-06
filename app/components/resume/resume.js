@@ -4,6 +4,19 @@ import React, {Component} from 'react';
 import $ from 'jquery'
 import './resume.less'
 
+import { bounceInUp } from 'react-animations';
+import { StyleSheet, css } from 'aphrodite';
+
+
+const animation_paper_slide_in = StyleSheet.create({
+  bounceInUp: {
+    animationName: bounceInUp,
+    animationDuration: '1s'
+  }
+})
+
+
+
 export class Resume extends React.Component {
   constructor(props){
 
@@ -12,8 +25,12 @@ export class Resume extends React.Component {
     this.mountStyle = this.mountStyle.bind(this)
     this.unMountStyle = this.unMountStyle.bind(this)
     this.resumeAnimations = this.resumeAnimations.bind(this)
+    this.transistionEndResumeSlide = this.transistionEndResumeSlide.bind(this)
+
 
     this.state = {
+      animation_slide_in: null,
+      show_resume_animations: false,
       show: true,
       style :{
         fontSize: 60,
@@ -66,17 +83,28 @@ export class Resume extends React.Component {
 
   transitionEnd(){
     console.log("transistion end fired")
+    console.log(this.state.show_resume_animations)
     if(!this.props.mounted){ //remove the node on transition end when the mounted prop is false
       this.setState({
-        show: true
+        show: true,
+        show_resume_animations: true
       })
     }
+
+    console.log("====>",this.state.show_resume_animations)
 
     setTimeout(this.resumeAnimations(),100)
   }
 
+  transistionEndResumeSlide(){
+    console.log("RESUME DONE SLIDING!!!!")
+  }
+
   resumeAnimations(){
-    console.log("RESUME ANIMATIONS FIRING")
+    this.setState({
+      animation_slide_in: css(animation_paper_slide_in.bounceInUp)
+    })
+
 
   }
 
@@ -91,6 +119,17 @@ export class Resume extends React.Component {
           <div className="resume-title">
             <h2>Skills & Experience</h2>
           </div>
+
+
+          {
+            this.state.show_resume_animations &&
+            <div className={this.state.animation_slide_in} id="resume-background-paper" onTransitionEnd={this.transistionEndResumeSlide}></div>
+          }
+
+
+
+
+
 
 
         </div>

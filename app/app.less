@@ -3,6 +3,8 @@
 
     .shell-body {
       height: 280px;
+      font-weight: bolder;
+
       font-family: 1em 'Andale Mono', Consolas, 'Courier New';
     }
 
@@ -13,13 +15,27 @@
 
 }
 
+#canvas {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 1;
+}
+
+#codeaholic_container {
+  display: inline-block;
+  width: 100%;
+}
 
 
 //css for the enter button
 
 #enter-button-container {
-  position: relative;
-    bottom: 10%;
+  position: fixed;
+  z-index: 99;
+  // bottom: 10%;
+  top: 50%;
+  width: 100%;
 }
 
 //css for menu container
@@ -42,6 +58,10 @@ body {
   // color: #
   text-shadow: 0 1px 1px black;
   color: #b8b8b8;
+  // background-image: url("/img/grass_cloud.JPG");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
 
 }
 

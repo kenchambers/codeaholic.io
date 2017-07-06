@@ -18,18 +18,32 @@ import Resume from './components/resume'
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup' // ES6
 import AOS from 'aos';
 import $ from 'jquery'
+var injectTapEventPlugin = require("react-tap-event-plugin");
+injectTapEventPlugin();
 
 // load css
 import './app.less';
 import './aos.css';
 
 
+
+
+
+const no_background = {
+    bckgroundImage: 'none',
+    display: 'inline-block',
+    width: '100%'
+
+}
+
 class App extends React.Component {
 
   constructor(props){
     super(props)
-    this.buttonClick = this.buttonClick.bind(this)
+    this.buttonTouchTap = this.buttonTouchTap.bind(this)
+
     AOS.init();
+
 
     this.state = {
       showChild: false,
@@ -45,7 +59,7 @@ class App extends React.Component {
   componentWillMount() {
 
   }
-  buttonClick(){
+  buttonTouchTap(){
     this.setState({
       showChild: !this.state.showChild
     })
@@ -82,6 +96,8 @@ class App extends React.Component {
 
 
 
+
+
     return(
       <Router>
 
@@ -109,7 +125,7 @@ class App extends React.Component {
                      <About mounted={self.state.showChild} data={self.state}/>
                        <Link to="/resume">
                          <div className="main-menu-container">
-                          <button onClick={self.buttonClick} className="pure-button"><h3>Resume</h3></button>
+                          <button onTouchTap={self.buttonTouchTap} className="pure-button"><h3>Resume</h3></button>
                          </div>
                        </Link>
                    </div>
@@ -118,7 +134,7 @@ class App extends React.Component {
                location={location}
                key={2}
                props={self.state}/>
-             <Route path="/resume"
+             <Route exact path="/resume"
                value="resume"
                component={function(){
                  return (
@@ -126,7 +142,7 @@ class App extends React.Component {
                      <Resume mounted={self.state.showChild} data={self.state}/>
                      <Link to="/contact">
                        <div className="main-menu-container">
-                        <button onClick={self.buttonClick} className="pure-button"><h3>Contact</h3></button>
+                        <button onTouchTap={self.buttonTouchTap} className="pure-button"><h3>Contact</h3></button>
                        </div>
                      </Link>
                    </div>
@@ -143,7 +159,7 @@ class App extends React.Component {
                       <Contact mounted={self.state.showChild} data={self.state}/>
                       <Link to="/blog">
                         <div className="main-menu-container">
-                         <button onClick={self.buttonClick} className="pure-button"><h3>Blog</h3></button>
+                         <button onTouchTap={self.buttonTouchTap} className="pure-button"><h3>Blog</h3></button>
                         </div>
                       </Link>
                     </div>
@@ -152,7 +168,7 @@ class App extends React.Component {
                location={location}
                key={4}
                props={self.state}/>
-             <Route path="/blog"
+             <Route exact path="/blog"
                value="blog"
                component={function(){
                  return (
@@ -160,7 +176,7 @@ class App extends React.Component {
                        <Blog data={self.state}/>
                        <Link to="/">
                          <div className="main-menu-container">
-                          <button onClick={self.buttonClick} className="pure-button"><h3>Home</h3></button>
+                          <button onTouchTap={self.buttonTouchTap} className="pure-button"><h3>Home</h3></button>
                          </div>
                        </Link>
                     </div>

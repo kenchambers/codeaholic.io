@@ -27,8 +27,12 @@
 }
 
 .console-container {
-  margin: 10% auto;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  margin: 10%;
   font-size: 1rem;
+  z-index: 99;
 
   // border: 1px solid red;
   height: auto;
@@ -108,8 +112,10 @@
   margin: 0;
   padding: 5px;
   list-style: none;
-  background: #141414;
-  color: #45D40C;
+  // background: #141414;
+  background: rgba(20, 20, 20, 0.84);
+
+  color: #fff;
   font: 0.8em 'Andale Mono', Consolas, 'Courier New';
   line-height: 1.6em;
   height: 300px;

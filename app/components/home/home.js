@@ -8,6 +8,36 @@ import {
 
 import Animated from 'animated/lib/targets/react-dom'
 
+
+import { bounce } from 'react-animations';
+import { StyleSheet, css } from 'aphrodite';
+
+
+//select random background picture
+const imgArray = ['/img/grass_cloud.JPG','/img/just_cloud.JPG','/img/tree_space.jpeg','/img/water_cloud.JPG']
+const background_image_url = imgArray[Math.floor(Math.random() * imgArray.length)];
+
+const background_style = {
+    position: 'relative',
+    zIndex: 1,
+    backgroundImage:    'url('+background_image_url+')',
+    backgroundSize:     'cover',
+    backgroundRepeat:   'no-repeat',
+    backgroundPosition: 'center center',
+    display: 'inline-block',
+    width: '100%',
+    height: '100%',
+    overflowY: 'hidden'
+}
+
+const animation_styles = StyleSheet.create({
+  bounce: {
+    animationName: bounce,
+    animationDuration: '1s'
+  }
+})
+
+
 import './home.less';
 
 export class Home extends React.Component {
@@ -17,8 +47,12 @@ export class Home extends React.Component {
     this.transitionEnd = this.transitionEnd.bind(this)
     this.mountStyle = this.mountStyle.bind(this)
     this.unMountStyle = this.unMountStyle.bind(this)
+    this.runAnimation = this.runAnimation.bind(this)
+
     // this.loadBokeh = this.loadBokeh.bind(this)
     this.state = {
+      backgroundImage: background_style,
+      run_animation: null,
       profile_pic: this.props.profile_pic,
       show: true,
       style :{
@@ -275,7 +309,7 @@ export class Home extends React.Component {
 
   runTyped(){
 
-    var home_page_string = "Welcome to <br> <h1>codeaholic.io</h1><br>the Personal Creation of <strong>Kenneth Chambers</strong><br> I am a <strong>React / Rails</strong> Web developer <br> <br> There should be a button below, go ahead and click it to enter the site."
+    var home_page_string = "Welcome to <br> <h1>codeaholic.io</h1><br>the Personal Creation of<br> <strong>Kenneth Chambers</strong><br> I am a <strong>React / Rails</strong> Web developer <br> <br> There should be a button below, go ahead and click it to enter the site."
 
     // console.log("RUN TYPED RUNNNING")
     Typed.new('.typed_element', {
@@ -300,9 +334,20 @@ export class Home extends React.Component {
     // console.log("transistion end fired")
     if(!this.props.mounted){ //remove the node on transition end when the mounted prop is false
       this.setState({
-        show: true
+        show: true,
+        run_animation: css(animation_styles.bounce)
       })
     }
+
+    console.log(this.state)
+
+
+  }
+
+  runAnimation(){
+    // console.log("RUN ANIMATION RUNNING",run_animation)
+    // run_animation =
+    // console.log(run_animation)
   }
 
   render() {
@@ -317,14 +362,15 @@ export class Home extends React.Component {
          }
 
 
-    console.log
+
 
     return (
 
       this.state.show &&
 
-      <div style={this.state.style}>
+      <div style={this.state.style} onTransitionEnd={this.transitionEnd}>
 
+        <div style={this.state.backgroundImage}></div>
 
 
         <div className="console-container">
@@ -343,11 +389,11 @@ export class Home extends React.Component {
         <div className="label-name-container" data-aos="fade-in" data-aos-anchor-placement="top-center"></div>
 
 
-          <div id="enter-button-container">
+          <div id="enter-button-container" className={this.state.run_animation}>
 
 
               <Link to="/about">
-              <div onClick={self.buttonClick} className="night-hotel" onClick={function(){
+              <div onTouchTap={self.buttonTouchTap} className="night-hotel" onTouchTap={function(){
                   console.log("CHICKEN SALAD",window)
                   window.fadeThreeJS()
 
